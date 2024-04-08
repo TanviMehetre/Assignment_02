@@ -101,6 +101,54 @@ const handleDecrease = (index) => {
   }
 };
 
+// const renderCartItemsWithQuantity = (product, index)=>(
+//   <div className="col-sm-4 mb-4" key={product.id}>
+//       <div className="card">
+//         <img className="card-img-top" src={product.image} alt={product.title} />
+//         <div className="card-body">
+//           <h5 className="card-title">{product.title}</h5>
+//           <p className="card-text">${product.price}</p>
+//           <div className="quantity">
+//             <span className="quantity-value">{quantities[index]}</span>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+// );
+
+// const renderCartItemsWithQuantity = (product, quantity) => (
+//   <div className="col-sm-4 mb-4" key={product.id}>
+//     <div className="card">
+//       <img className="card-img-top" src={product.image} alt={product.title} />
+//       <div className="card-body">
+//         <h5 className="card-title">{product.title}</h5>
+//         <p className="card-text">${product.price} (x{quantity})</p> {/* Display quantity */}
+//       </div>
+//     </div>
+//   </div>
+// );
+
+const renderCartItemsWithQuantity = () => {
+  const cartItems = Object.values(filteredCart.reduce((acc, product) => {
+    if (!acc[product.id]) acc[product.id] = { ...product, quantity: 0 };
+    acc[product.id].quantity++;
+    return acc;
+  }, {}));
+
+  return cartItems.map((product) => (
+    <div className="col-sm-4 mb-4" key={product.id}>
+      <div className="card">
+        <img className="card-img-top" src={product.image} alt={product.title} />
+        <div className="card-body">
+          <h5 className="card-title">{product.title}</h5>
+          <p className="card-text">${product.price} (x{product.quantity})</p>
+        </div>
+      </div>
+    </div>
+  ));
+};
+
+
 
   const renderProductCardWithQuantity = (product, index) => (
     <div className="col-sm-4 mb-4" key={product.id}>
@@ -144,6 +192,9 @@ const handleDecrease = (index) => {
     const product = Products.find((product) => product.id === productId);
   
     // render the product with its quantity
+    return{
+
+    }
   });
 
   const togglePayment = () => {
@@ -151,22 +202,37 @@ const handleDecrease = (index) => {
     setSubmitted(false); // Reset submitted status when payment form is toggled
   };
 
+  // const handleSearchChange = (event) => {
+  //   const searchTerm = event.target.value;
+  //   const filteredProducts = Products.filter((product) =>
+  //     product.category.includes(searchTerm)
+  //   );
+  //   Products(filteredProducts); // assuming you have a state variable for products
+  // };
+
   const handleSearchChange = (event) => {
-    const searchTerm = event.target.value;
-    const filteredProducts = Products.filter((product) =>
-      product.category.includes(searchTerm)
-    );
-    Products(filteredProducts); // assuming you have a state variable for products
+    setSearchTerm(event.target.value);
   };
 
+  const filteredProducts = Products.filter((product) =>
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
+  const filteredCart = cart.filter((producttest)=>
+    producttest.product
+  )
 
+  const totalItemsInCart = Object.values(filteredCart.reduce((acc, product) => {
+    if (!acc[product.id]) acc[product.id] = 0;
+    acc[product.id]++;
+    return acc;
+  }, {})).reduce((total, quantity) => total + quantity, 0);
 
 
   return (
       <div>
         <center><h1 >STORE SE/ComS319</h1></center>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {/* <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div className="search">
             <input
               type="text"
@@ -188,6 +254,8 @@ const handleDecrease = (index) => {
                 </div>
               </div>
             </div>
+
+            
         <div className="card">
         <div className="row">
           <div className="col-md-8 cart">
@@ -202,11 +270,105 @@ const handleDecrease = (index) => {
             <button className="btn btn-primary" onClick={togglePayment}>Checkout</button>
           </div>
         </div>
+      </div> */}
+
+
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <div className="search">
+    <input
+      type="text"
+      placeholder="Search"
+      value={searchTerm}
+      onChange={handleSearchChange}
+    />
+  </div>
+</div>
+<div className="title">
+  <div className="row">
+    <div className="col">
+      <h4>
+        <b>319 Shopping Cart</b>
+      </h4>
+    </div>
+    <div className="col align-self-center text-right text-muted">
+      Products selected {cart.length}
+    </div>
+  </div>
+</div>
+
+
+<div className="card">
+  <div className="row">
+    {/* <div className="col-md-8 cart">
+      <div className="row">
+        {filteredProducts.map((product, index) => (
+          <div className="col-sm-4 mb-4" key={product.id}>
+            <div className="card">
+              <img className="card-img-top" src={product.image} alt={product.title} />
+              <div className="card-body">
+                <h5 className="card-title">{product.title}</h5>
+                <p className="card-text">${product.price}</p>
+                
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+    </div>
+    <div className="float-end">
+      <p className="mb-0 me-5 d-flex align-items-center">
+        <span className="small text-muted me-2">Order total:</span>
+        <span className="lead fw-normal">${cartTotal}</span>
+      </p>
+      <button className="btn btn-primary" onClick={togglePayment}>Checkout</button>
+    </div> */}
+    <div className="col-md-8 cart">
+  <div className="row">
+    {filteredProducts.map((product, index) => (
+      renderProductCardWithQuantity(product, index)
+    ))}
+  </div>
+  <div className="float-end">
+    <p className="mb-0 me-5 d-flex align-items-center">
+      <span className="small text-muted me-2">Order total:</span>
+      <span className="lead fw-normal">${cartTotal}</span>
+    </p>
+    <button className="btn btn-primary" onClick={togglePayment}>Checkout</button>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+
       {showPayment && !submitted && (
         <div>
           <h1>Cart</h1>
-          {cartItems}
+          
+          <p>Total Items: {cart.length}</p>
+          <div className="row">
+      {Object.values(filteredCart.reduce((acc, product) => {
+        if (!acc[product.id]) acc[product.id] = { ...product, quantity: 0 };
+        acc[product.id].quantity++;
+        return acc;
+      }, {})).map((product) => {
+        return renderCartItemsWithQuantity(product, product.quantity);
+      })}
+    </div>
+    <div className="row">
+      {cart.map((product) => (
+        <div className="col-sm-4 mb-4" key={product.id}>
+          <div className="card">
+            <img className="card-img-top" src={product.image} alt={product.title} />
+            <div className="card-body">
+              <h5 className="card-title">{product.title}</h5>
+              <p className="card-text">${product.price}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
           <h1>Payment Form</h1>
           <form onSubmit={handleSubmit(onSubmit)} className="container mt-5">
             <div className="form-group">
